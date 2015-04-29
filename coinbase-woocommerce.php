@@ -3,7 +3,7 @@
  * Plugin Name: coinbase-woocommerce
  * Plugin URI: https://github.com/coinbase/coinbase-woocommerce
  * Description: Accept Bitcoin on your WooCommerce-powered website with Coinbase.
- * Version: 2.1.1
+ * Version: 2.1.2
  * Author: Coinbase Inc.
  * Author URI: https://coinbase.com
  * License: MIT
@@ -203,7 +203,11 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 				$api_secret = $this->get_option('apiSecret');
 
 				if ($api_key == '' || $api_secret == '') {
-					$woocommerce->add_error(__('Sorry, but there was an error processing your order. Please try again or try a different payment method. (plugin not configured)', 'coinbase-woocommerce'));
+					if ( version_compare( $woocommerce->version, '2.1', '>=' ) ) {
+						wc_add_notice(__('Sorry, but there was an error processing your order. Please try again or try a different payment method. (plugin not configured)', 'coinbase-woocommerce'), 'error' );
+					} else {
+						$woocommerce->add_error(__('Sorry, but there was an error processing your order. Please try again or try a different payment method. (plugin not configured)', 'coinbase-woocommerce'));
+					}
 					return;
 				}
 
@@ -213,7 +217,11 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 				}
 				catch (Exception $e) {
 					$order->add_order_note(__('Error while processing coinbase payment:', 'coinbase-woocommerce') . ' ' . var_export($e, TRUE));
-					$woocommerce->add_error(__('Sorry, but there was an error processing your order. Please try again or try a different payment method.', 'coinbase-woocommerce'));
+					if ( version_compare( $woocommerce->version, '2.1', '>=' ) ) {
+						wc_add_notice(__('Sorry, but there was an error processing your order. Please try again or try a different payment method.', 'coinbase-woocommerce'), 'error' );
+					} else {
+						$woocommerce->add_error(__('Sorry, but there was an error processing your order. Please try again or try a different payment method.', 'coinbase-woocommerce'));
+					}
 					return;
 				}
 
